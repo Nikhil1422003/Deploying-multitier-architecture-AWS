@@ -140,5 +140,8 @@ CREATE TABLE data (
 - After creating loadbalancer we should copy DNS of the load balancer 
 - We can get ouyput as the below image shown
 
+![WhatsApp Image 2024-07-06 at 8 43 23 PM](https://github.com/Nikhil1422003/Deploying-multitier-architecture-AWS/assets/155822950/8b928948-ed0f-4715-bb6f-eec14a2efab7)
+ 
+
 
   
