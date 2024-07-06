@@ -56,13 +56,6 @@
 - Add Storage: Default 8 GB is sufficient.
 - Configure Security Group: Add rules for HTTP (port 80) and SSH (port 22).
 
-####  Enable Auto Scaling
-- Navigate to EC2 Dashboard.
-- Auto Scaling Groups
-- Create an Auto Scaling Group.
-- Attach the previously created EC2 instance template.
-- Configure group size: Minimum 2 instances.
-- Set scaling policies to manage the desired capacity automatically.
 
 **Connect to the ec2 instance previously created and update the machine and install apache2 commands given below**
 ```
@@ -72,3 +65,80 @@ sudo systemctl start httpd service
 
 ```
 
+- Check the HTTPD installed or not by copying the public IP of the instance & paste on browser
+- We need to mve the ` index.php ` and the images that we have in the local machine to ec2 terminal we can use gitbash or command prompt for this by moving to downloads directory in our local machine through the command ` cd downloads ` ` scp -i -r "keypairname.pem" "file-name" ec2-user@(IP of the instance ` by running these command we can able to copy files in the terminal
+- The index.php are available in my repo [Nikhil1422003](https://github.com/Nikhil1422003/Deploying-multitier-architecture-AWS/blob/main/index.php)
+- Then we need to replace the ` index.html ` to ` index.php
+- We can use this command to move index.php to html path
+```
+sudo mv index.php images /var/www/html
+```
+
+#### Step.3 Create an RDS Instance
+- Create Database:
+- Choose MySQL.
+- Specify DB details:
+  - DB instance identifier: ` intel-db `
+  - Master username: ` admin. `
+  - Master password: ` intel123. `
+- Instance specifications: ` Choose db.t2.micro `
+- Storage: Allocate storage as per requirement (default 20 GB).
+- Connectivity: Ensure the database is in the same VPC as the EC2 instances.
+- Create DB instance
+
+**Installing softwares on EC2**
+- We need to install some softwares like ` MYSQL ` and ` PHP ` commands given below
+```
+sudo apt-add-repository-y ppa:ondrej/php
+sudo apt install php5.6 mysql-client php5.6-mysqli
+```
+- In the instance move to ` cd /var/www/html ` and edit file as per our requirements by using command
+```
+sudo nano index.php
+```
+
+#### step.4  Create Database and Table in RDS Instance
+- Connect to the RDS instance using the endpoint provided.
+- We can connect database in the instance with the command
+```
+mysql -h (end-point of RDS) -u (USERNAME) -p (PASSWORD)
+```
+- After connecting the database enter ` show databases ` we can see databases that we are available
+- Create Database and Table
+```
+CREATE DATABASE intel;
+USE intel;
+CREATE TABLE data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    value VARCHAR(25) NOT NULL
+);
+
+```
+#### Step.5  Change Hostname in Website
+- SSH into the EC2 instance.
+- **Modify the PHP website configuration**  to connect to the RDS instance:
+- Change the database host in the configuration file to the RDS endpoint.
+
+#### Step.6  Allow Traffic from EC2 to RDS Instance
+- **Modify RDS Security Group**
+- Add an inbound rule to allow MySQL/Aurora (port 3306) from the EC2 instances' security group.
+- Allow All-Traffic to EC2 Instance
+- Modify EC2 Security Group:
+- Add inbound rules to allow all necessary traffic.
+
+#### Step.7 Enable Auto Scaling
+- Navigate to EC2 Dashboard.
+- Auto Scaling Groups
+- Create an Auto Scaling Group.
+- Attach the previously created EC2 instance template.
+- Configure group size: Minimum 2 instances.
+- Set scaling policies to manage the desired capacity automatically.
+
+#### Step.8 Create loadbalancer
+- By using previously created autoscaling group we can attach a new load balacer to that ASG
+- The load balancer helps us to distribute loads based on situation
+- After creating loadbalancer we should copy DNS of the load balancer 
+- We can get ouyput as the below image shown
+
+
+  
